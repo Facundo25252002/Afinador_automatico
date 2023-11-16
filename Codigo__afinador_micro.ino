@@ -100,46 +100,46 @@ afinar_sostenido();
 
 void afinar_bemol(){
    /*
-    Comprobar si el LED de Bemol (valores bemol <10  && sostenido > 540)
+    Comprobar si el LED de Bemol (valores bemol <1  && sostenido > 1)
 
     Si se cumple esa condición gira el motor hacia la izquierda e imprime la palabra "Bemol"
   */
-  if(LEER_BEMOL > 10) return;
-  if(LEER_SOSTENIDO < 400) return;
+  if(LEER_BEMOL > 1) return;
+  if(LEER_SOSTENIDO < 1) return;
   
   DIRECCION_MOTOR_IZQUIERDA;
   
- 
+   //Serial.println("bemol");
   //lcd.clear();
-  //lcd.print("bemol");
+ //lcd.print("bemol");
     
 }
 
 void afinar_sostenido(){
-
-   if(LEER_SOSTENIDO > 10 ) return;
-   if(LEER_BEMOL < 400) return;
+  
+  if(LEER_BEMOL < 1) return;
+  if(LEER_SOSTENIDO > 1 ) return;
+  
    
    DIRECCION_MOTOR_DERECHA;
-
-  // lcd.clear();
+   
+    //Serial.println("sostenido");
+   // lcd.clear();
   //lcd.print("Sostenido");
  } 
 
 void afinado(){
   /*
-    Comprobar si el LED de Bemol es mayor o igual a 540 y menor o igual a 550
-    Comprobar si el LED de Sostenido es mayor o igual a 540 y menor o igual a 550
+    Comprobar si el LED de Bemol es mayor   a 1 (entra)
+    Comprobar si el LED de Sostenido es mayor  a 1 (entra)
 
     Si se cumplen esas condiciones se detiene el motor e imprime la palabra "Afinado"
   */
   
-  if(LEER_BEMOL < 400) return;  // negados
-  if(LEER_BEMOL > 550) return;   
-  if(LEER_SOSTENIDO < 400)return;
-  if(LEER_SOSTENIDO > 550) return;
-   
-  //lcd.clear();
+  if(LEER_BEMOL  < 1) return;  // negados
+  if(LEER_SOSTENIDO < 1)return;
+    //Serial.println("Afinado");
+   //lcd.clear();
   //lcd.print("Afinado");
    
 }
@@ -159,8 +159,8 @@ void lcd_mensajes(){
   
 void lcd_mensaje_bemol() 
 {
-  if(LEER_BEMOL > 10) return;
-  if(LEER_SOSTENIDO < 400) return;
+  if(LEER_BEMOL > 1) return;
+  if(LEER_SOSTENIDO < 1) return;
   lcd.clear(); 
   lcd.print("Bemol"); 
  
@@ -168,10 +168,9 @@ void lcd_mensaje_bemol()
 
 void lcd_mensaje_afinado() 
 {
-  if(LEER_BEMOL  < 400) return;  // negados
-  if(LEER_BEMOL  > 550) return;   
-  if(LEER_SOSTENIDO < 400)return;
-  if(LEER_SOSTENIDO > 550) return;
+  if(LEER_BEMOL  < 1) return;  // negados
+  if(LEER_SOSTENIDO < 1)return;
+  
   lcd.clear(); 
   lcd.print("Afinado"); 
 
@@ -180,8 +179,8 @@ void lcd_mensaje_afinado()
 
 void lcd_mensaje_sostenido() 
 {
-  if(LEER_SOSTENIDO > 10 ) return;
-  if(LEER_BEMOL < 400) return;
+  if(LEER_BEMOL < 1) return;
+  if(LEER_SOSTENIDO > 1 ) return;
   lcd.clear(); 
   lcd.print("Sostenido"); 
   
