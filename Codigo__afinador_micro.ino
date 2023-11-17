@@ -25,11 +25,10 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 int modo_manual = 0;
 
-
 const int pasosPorRevolucion = 200;                 // 200 pasos por revolución - 1,8º (por paso) para una vuelta entera del motor paso a paso NEMA 17
 Stepper stepper(pasosPorRevolucion, 8, 9, 10, 11); // Inicializar la librería para el motor paso a paso con los pines 8, 9, 10 y 11
 
-#define VELOCIDAD_MOTOR                stepper.setSpeed(200); 
+#define VELOCIDAD_MOTOR                stepper.setSpeed(50); 
 #define DIRECCION_MOTOR_IZQUIERDA      stepper.step(-1); 
 #define DIRECCION_MOTOR_DERECHA        stepper.step(1);
 
@@ -45,6 +44,12 @@ Stepper stepper(pasosPorRevolucion, 8, 9, 10, 11); // Inicializar la librería p
 #define LEER_SOSTENIDO     analogRead(A3)  // Conectado a led sostenido del afinador
 
 
+//Estados del afinador
+#define ESTADO_AFINADO    0
+#define ESTADO_SOSTENIDO  1
+#define ESTADO_BEMOL      2
+int estado=ESTADO_AFINADO;
+int estado_ant;
 
 /*
   IMPORTANTE: Usar el I2C Scanner para encontrar la dirección correcta, que en este caso es 0x27
@@ -66,10 +71,12 @@ void setup()
 
 void loop() 
 { 
+  lectura_estados_afinador();
   ledTest();
-  lcd_mensajes();
+  ActualizaLCD();
   afinador(); 
-  recepcionSerie(); 
+  recepcionSerie();
+   
   
 }
 
@@ -91,7 +98,6 @@ void afinador()
 {
  
 if(modo_manual)return;
-
 afinado();
 afinar_bemol();
 afinar_sostenido();
@@ -146,45 +152,32 @@ void afinado(){
 
 
 
+void ActualizaLCD(){
 
+  if(estado==estado_ant) return;
+  estado_ant=estado;
 
-void lcd_mensajes(){
+  switch(estado)
+    {
+    case ESTADO_AFINADO:
+           lcd.clear(); 
+           lcd.print("Afinado"); break; 
+           estado_ant=estado;
+    case ESTADO_BEMOL:
+           lcd.clear(); 
+           lcd.print("Bemol"); break;
+            estado_ant=estado; 
+    case ESTADO_SOSTENIDO:
+           lcd.clear(); 
+           lcd.print("Sostendo"); break;
+           estado_ant=estado;
+     default: break;       
+    }
   
-  lcd_mensaje_bemol();
-  lcd_mensaje_afinado(); 
-  lcd_mensaje_sostenido(); 
   
-}
-
-  
-void lcd_mensaje_bemol() 
-{
-  if(LEER_BEMOL > 1) return;
-  if(LEER_SOSTENIDO < 1) return;
-  lcd.clear(); 
-  lcd.print("Bemol"); 
- 
-}
-
-void lcd_mensaje_afinado() 
-{
-  if(LEER_BEMOL  < 1) return;  // negados
-  if(LEER_SOSTENIDO < 1)return;
-  
-  lcd.clear(); 
-  lcd.print("Afinado"); 
+  }
 
 
-}
-
-void lcd_mensaje_sostenido() 
-{
-  if(LEER_BEMOL < 1) return;
-  if(LEER_SOSTENIDO > 1 ) return;
-  lcd.clear(); 
-  lcd.print("Sostenido"); 
-  
-}
 
 void recepcionSerie(){
  
@@ -207,3 +200,18 @@ void recepcionSerie(){
     }
        
  }
+
+
+void lectura_estados_afinador()
+  {
+  unsigned int bemol, sostenido;
+  
+  bemol=LEER_BEMOL;
+  sostenido=LEER_SOSTENIDO;
+  
+  if(bemol>1 && sostenido<1)      estado=ESTADO_SOSTENIDO;
+  else if(bemol<1 && sostenido>1) estado=ESTADO_BEMOL;
+  else                            estado=ESTADO_AFINADO;
+  
+
+  }
