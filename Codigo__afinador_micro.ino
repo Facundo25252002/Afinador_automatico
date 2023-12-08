@@ -1,7 +1,7 @@
 /*
 Proyecto: Afinador Automatico
 Nombre: Facundo Maldonado
-Profesor: Alejo Giles
+Profesores: -Alejo Giles(Microcontroladores),-Nicolas Gonzalez(Robótica y Automatización Industrial).
 
 Como interactúa el usuario:
 El usuario prende un interruptor (que energiza motor , pantalla led,arduino nano, y controlador l298n); paso seguido se prende afinador (que toma la nota de la guitarra)
